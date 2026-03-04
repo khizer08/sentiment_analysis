@@ -275,3 +275,5 @@ This project demonstrates:
 - **VADER NLP** — a rule-based sentiment analysis algorithm
 - **React functional components** with hooks and React Router
 - **Responsive UI** with Tailwind CSS mobile-first utilities
+
+# khizer branch created
