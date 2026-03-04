@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Base resets ─────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background-color: #0a0a0f;
+  color: #e8e8f0;
+  font-family: 'DM Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Scrollbar ───────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #12121a; }
+::-webkit-scrollbar-thumb { background: #3d3d5c; border-radius: 3px; }
+
+/* ── Noise texture overlay ───────────────────────────────── */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.4;
+}
+
+/* ── Glow effects ────────────────────────────────────────── */
+.glow-green  { box-shadow: 0 0 24px rgba(0, 255, 157, 0.2); }
+.glow-red    { box-shadow: 0 0 24px rgba(255, 59, 107, 0.2); }
+.glow-amber  { box-shadow: 0 0 24px rgba(255, 204, 0, 0.2);  }
+
+/* ── Glass card ──────────────────────────────────────────── */
+.glass {
+  background: rgba(28, 28, 40, 0.6);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* ── Active nav link ─────────────────────────────────────── */
+.nav-active {
+  color: #00ff9d;
+  border-bottom: 2px solid #00ff9d;
+}
+
+/* ── Confidence bar fill ─────────────────────────────────── */
+.bar-fill {
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Textarea focus ring ─────────────────────────────────── */
+textarea:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 255, 157, 0.35);
+}
