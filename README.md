@@ -2,11 +2,9 @@
 
 A complete academic NLP project built with **React**, **Node.js/Express**, and **Python VADER**.
 
----
 
-## 🏗️ Architecture (MVC)
+# Architecture (MVC)
 
-```
 React Frontend (View)
        │  POST /api/analyze
        ▼
@@ -17,17 +15,16 @@ Python VADER (NLP Service)
        │  { sentiment, confidence, compound }
        ▼
 Response bubbles back up
-```
 
-## Installation & Setup
 
-### Prerequisites
+# Installation & Setup
+
+# Prerequisites
 
 - **Node.js** v18+ → https://nodejs.org
 - **Python** 3.8+ → https://python.org
 - **npm** (comes with Node.js)
 
----
 
 # Terminal 1
 
