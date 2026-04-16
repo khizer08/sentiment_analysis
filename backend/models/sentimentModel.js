@@ -46,14 +46,14 @@ async function processAnalysis(rawText) {
 
   // Step 3: Build a structured result object
   const result = {
-    id: Date.now(),                              // Simple unique ID
-    text,
-    sentiment: nlpResult.sentiment,
-    confidence: nlpResult.confidence,
-    compound: nlpResult.compound_score,
-    rawScores: nlpResult.raw_scores,
-    analyzedAt: new Date().toISOString(),
-  };
+  id: Date.now(),
+  text,
+  sentiment: nlpResult.sentiment,
+  confidence: nlpResult.confidence,
+  compound: nlpResult.compound_score,
+  models: nlpResult.models,
+  analyzedAt: new Date().toISOString(),
+};
 
   // Step 4: Persist to history (newest first)
   historyStore.unshift(result);

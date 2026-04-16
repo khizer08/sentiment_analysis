@@ -7,22 +7,33 @@ const sections = [
     title: 'What is Sentiment Analysis?',
     content: `Sentiment analysis (also called opinion mining) is a Natural Language Processing (NLP) technique
     used to identify and extract subjective information from text — primarily whether the expressed opinion
-    is positive, negative, or neutral. It is widely used in social media monitoring, customer feedback
-    analysis, market research, and brand reputation management.`,
+    is positive, negative, or neutral. In this project, we use a hybrid approach by combining multiple models
+    to improve accuracy and reliability of predictions. It is widely used in social media monitoring, customer
+    feedback analysis, market research, and brand reputation management.`,
   },
   {
-    title: 'How VADER Works',
-    content: `VADER (Valence Aware Dictionary and sEntiment Reasoner) is a lexicon and rule-based sentiment 
-    analysis tool specifically attuned to sentiments expressed in social media. Unlike ML models that 
-    require training, VADER uses a curated dictionary of words each associated with a sentiment score,
-    combined with grammatical heuristics like punctuation emphasis, capitalization, and degree modifiers.`,
+    title: 'Multi-Model Approach',
+    content: `This system uses three different sentiment analysis models:
+
+    1. VADER: A rule-based model optimized for social media text, handling emojis, slang, and punctuation.
+    2. TextBlob: A polarity-based model that assigns a score between -1 and +1 based on general language sentiment.
+    3. BERT (DistilBERT): A deep learning model that understands context and provides highly accurate predictions.
+
+    Each model analyzes the same input text independently and produces its own sentiment score and confidence.`,
   },
   {
-    title: 'The Compound Score',
-    content: `VADER outputs four values: pos, neg, neu (proportion scores that sum to 1.0) and a compound
-    score — a single normalized value between -1 (most negative) and +1 (most positive). This system uses
-    the compound score to classify text: ≥ 0.05 → Positive, ≤ -0.05 → Negative, anything in between → Neutral.
-    The confidence score is derived by normalizing the compound to a 0-1 scale.`,
+    title: 'Final Sentiment Calculation',
+    content: `The system combines the outputs of all three models to produce a final result. Each model returns
+    a sentiment score (ranging from -1 to +1), and the system calculates the average of these scores to determine
+    the overall sentiment.
+
+    Final classification is done as follows:
+    ≥ 0.05 → Positive
+    ≤ -0.05 → Negative
+    otherwise → Neutral
+
+    The confidence score is calculated as the average confidence of all models, providing a more balanced and
+    reliable prediction compared to using a single model.`,
   },
 ];
 

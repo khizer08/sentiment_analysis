@@ -125,7 +125,7 @@ export default function ResultCard({ result }) {
 
       {/* Compound score */}
       <div className="pt-4 border-t border-ink-600 flex items-center justify-between text-xs">
-        <span className="text-gray-500 font-body">VADER Compound Score</span>
+        <span className="text-gray-500 font-body">Compound Score</span>
         <span className="font-display text-white bg-ink-700 px-3 py-1 rounded-lg">
           {result.compound?.toFixed(4) ?? 'N/A'}
         </span>

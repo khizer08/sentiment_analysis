@@ -2,58 +2,73 @@
  * Home.jsx - Landing page explaining the project.
  */
 
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 const features = [
   {
-    icon: '🧠',
-    title: 'VADER NLP Engine',
-    desc: 'Uses Valence Aware Dictionary and sEntiment Reasoner — optimized for social-media text.',
+    icon: "🧠",
+    title: "Multi-Model NLP Engine",
+    desc: "Combines VADER, TextBlob, and BERT to deliver more accurate and reliable sentiment predictions.",
   },
   {
-    icon: '📊',
-    title: 'Confidence Scoring',
-    desc: 'Every analysis includes a normalized confidence score and a full pos/neg/neu breakdown.',
+    icon: "📊",
+    title: "Aggregated Confidence",
+    desc: "Final sentiment is computed using the average score and confidence across all models.",
   },
   {
-    icon: '⚡',
-    title: 'Real-time Analysis',
-    desc: 'Results in milliseconds via a REST API connecting React, Node.js, and Python.',
+    icon: "⚡",
+    title: "Real-time Analysis",
+    desc: "Fast results via a REST API connecting React, Node.js, and a Python NLP microservice.",
   },
   {
-    icon: '📜',
-    title: 'History Tracking',
-    desc: 'All past analyses are stored server-side so you can compare and review them later.',
+    icon: "📜",
+    title: "History Tracking",
+    desc: "All past analyses are stored server-side so you can compare and review them later.",
   },
 ];
 
-const stack = ['React.js', 'Vite', 'Tailwind CSS', 'Node.js', 'Express.js', 'Python', 'VADER NLP', 'REST API'];
+const stack = [
+  "React.js",
+  "Vite",
+  "Tailwind CSS",
+  "Node.js",
+  "Express.js",
+  "Python",
+  "VADER",
+  "TextBlob",
+  "BERT (Transformers)",
+  "REST API",
+];
 
 export default function Home() {
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
-
       {/* Hero */}
       <div className="text-center mb-20 animate-fade-in">
         <div className="inline-flex items-center gap-2 bg-ink-800 border border-ink-600 rounded-full px-4 py-1.5 mb-8">
           <span className="w-2 h-2 rounded-full bg-accent-cyan animate-pulse-slow" />
-          <span className="text-xs font-display text-gray-400 tracking-wider">NLP ACADEMIC PROJECT</span>
+          <span className="text-xs font-display text-gray-400 tracking-wider">
+            NLP ACADEMIC PROJECT
+          </span>
         </div>
 
         <h1 className="font-display text-4xl sm:text-6xl md:text-7xl font-bold text-white mb-6 leading-tight">
-          Understand the{' '}
-          <span className="text-accent-cyan">Emotion</span>
+          Understand the <span className="text-accent-cyan">Emotion</span>
           <br />
           behind any Text
         </h1>
 
         <p className="text-gray-400 text-lg sm:text-xl max-w-2xl mx-auto font-body leading-relaxed mb-10">
-          A full-stack sentiment analysis system powered by VADER NLP. Paste any text and get instant
-          classification as Positive, Negative, or Neutral — with a confidence score.
+          A full-stack sentiment analysis system powered by multiple NLP models.
+          Paste any text and get instant classification as Positive, Negative,
+          or Neutral — using a hybrid approach with improved accuracy.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Link to="/analyzer" className="btn-primary text-base px-8 py-4 glow-cyan">
+          <Link
+            to="/analyzer"
+            className="btn-primary text-base px-8 py-4 glow-cyan"
+          >
             Start Analyzing →
           </Link>
           <Link to="/about" className="btn-ghost text-base px-8 py-4">
@@ -71,8 +86,12 @@ export default function Home() {
             style={{ animationDelay: `${i * 100}ms` }}
           >
             <span className="text-3xl mb-4 block">{f.icon}</span>
-            <h3 className="font-display font-bold text-white text-sm mb-2">{f.title}</h3>
-            <p className="text-gray-500 text-sm font-body leading-relaxed">{f.desc}</p>
+            <h3 className="font-display font-bold text-white text-sm mb-2">
+              {f.title}
+            </h3>
+            <p className="text-gray-500 text-sm font-body leading-relaxed">
+              {f.desc}
+            </p>
           </div>
         ))}
       </div>
@@ -82,11 +101,33 @@ export default function Home() {
         <p className="section-label text-center mb-8">System Architecture</p>
         <div className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-2 flex-wrap">
           {[
-            { label: 'React Frontend', sub: 'User Interface', color: 'border-accent-cyan text-accent-cyan' },
-            { label: '→', sub: 'HTTP POST', color: 'text-gray-600', noBox: true },
-            { label: 'Node/Express', sub: 'Backend API', color: 'border-accent-lime text-accent-lime' },
-            { label: '→', sub: 'HTTP POST', color: 'text-gray-600', noBox: true },
-            { label: 'Python VADER', sub: 'NLP Service', color: 'border-accent-amber text-accent-amber' },
+            {
+              label: "React Frontend",
+              sub: "User Interface",
+              color: "border-accent-cyan text-accent-cyan",
+            },
+            {
+              label: "→",
+              sub: "HTTP POST",
+              color: "text-gray-600",
+              noBox: true,
+            },
+            {
+              label: "Node/Express",
+              sub: "Backend API",
+              color: "border-accent-lime text-accent-lime",
+            },
+            {
+              label: "→",
+              sub: "HTTP POST",
+              color: "text-gray-600",
+              noBox: true,
+            },
+            {
+              label: "Python NLP (VADER + TextBlob + BERT)",
+              sub: "NLP Service",
+              color: "border-accent-amber text-accent-amber",
+            },
           ].map((item, i) =>
             item.noBox ? (
               <div key={i} className="flex flex-col items-center text-center">
@@ -94,11 +135,18 @@ export default function Home() {
                 <span className="text-xs text-gray-600">{item.sub}</span>
               </div>
             ) : (
-              <div key={i} className={`border ${item.color} rounded-xl px-5 py-3 text-center bg-ink-900`}>
-                <p className={`font-display font-bold text-sm ${item.color.split(' ')[1]}`}>{item.label}</p>
+              <div
+                key={i}
+                className={`border ${item.color} rounded-xl px-5 py-3 text-center bg-ink-900`}
+              >
+                <p
+                  className={`font-display font-bold text-sm ${item.color.split(" ")[1]}`}
+                >
+                  {item.label}
+                </p>
                 <p className="text-gray-500 text-xs mt-0.5">{item.sub}</p>
               </div>
-            )
+            ),
           )}
         </div>
       </div>

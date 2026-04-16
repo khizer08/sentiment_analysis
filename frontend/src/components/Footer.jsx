@@ -13,10 +13,10 @@ export default function Footer() {
             <span className="font-display text-sm text-gray-400">SentimentAI</span>
           </div>
           <p className="text-xs text-gray-600 text-center font-body">
-            NLP Academic Project · Built with VADER, Node.js, and React
+            NLP Academic Project · Built with VADER, TextBlob, BERT, Node.js, and React
           </p>
           <p className="text-xs text-gray-600 font-display">
-            VADER · NLTK · Express
+            VADER . TextBlob . BERT . NLTK . Express
           </p>
         </div>
       </div>

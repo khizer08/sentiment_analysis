@@ -1,50 +1,115 @@
-"""
-nlp_service.py - Python NLP Microservice
-Uses VADER (Valence Aware Dictionary and sEntiment Reasoner) for sentiment analysis.
-Exposes a simple HTTP server on port 5001.
-"""
-
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import json
+
+# VADER
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
-# Initialize the VADER sentiment analyzer (loaded once at startup for performance)
-analyzer = SentimentIntensityAnalyzer()
+# TextBlob
+from textblob import TextBlob
 
+# Transformers (DistilBERT)
+from transformers import pipeline
 
-def analyze_sentiment(text: str) -> dict:
-    """
-    Analyzes the sentiment of a given text using VADER.
+# Initialize models
+vader = SentimentIntensityAnalyzer()
+bert_pipeline = pipeline("sentiment-analysis")
 
-    VADER compound score rules:
-      >= 0.05  → Positive
-      <= -0.05 → Negative
-      otherwise → Neutral
-    """
-    scores = analyzer.polarity_scores(text)
+# -----------------------------
+# Individual Model Functions
+# -----------------------------
+
+def vader_analysis(text):
+    scores = vader.polarity_scores(text)
     compound = scores["compound"]
 
     if compound >= 0.05:
         sentiment = "Positive"
-        confidence = round((compound + 1) / 2, 4)
     elif compound <= -0.05:
         sentiment = "Negative"
-        confidence = round((1 - compound) / 2, 4)
     else:
         sentiment = "Neutral"
-        confidence = round(max(0.5, 1 - abs(compound) * 10), 4)
 
     return {
-        "sentiment": sentiment,
-        "confidence": confidence,
-        "compound_score": round(compound, 4),
-        "raw_scores": {
-            "positive": round(scores["pos"], 4),
-            "negative": round(scores["neg"], 4),
-            "neutral": round(scores["neu"], 4),
-        }
+        "model": "VADER",
+        "score": compound,
+        "confidence": round((abs(compound)), 4)
     }
 
+
+def textblob_analysis(text):
+    blob = TextBlob(text)
+    polarity = blob.sentiment.polarity  # -1 to +1
+
+    if polarity > 0:
+        sentiment = "Positive"
+    elif polarity < 0:
+        sentiment = "Negative"
+    else:
+        sentiment = "Neutral"
+
+    return {
+        "model": "TextBlob",
+        "score": round(polarity, 4),
+        "confidence": round(abs(polarity), 4)
+    }
+
+
+def bert_analysis(text):
+    result = bert_pipeline(text)[0]
+
+    label = result["label"]
+    score = result["score"]
+
+    if label == "POSITIVE":
+        polarity = score
+        sentiment = "Positive"
+    else:
+        polarity = -score
+        sentiment = "Negative"
+
+    return {
+        "model": "BERT",
+        "score": round(polarity, 4),
+        "confidence": round(score, 4)
+    }
+
+
+# -----------------------------
+# Combined Logic
+# -----------------------------
+
+def analyze_sentiment(text):
+    vader_res = vader_analysis(text)
+    textblob_res = textblob_analysis(text)
+    bert_res = bert_analysis(text)
+
+    results = [vader_res, textblob_res, bert_res]
+
+    # Average score
+    avg_score = sum(r["score"] for r in results) / len(results)
+
+    # Final sentiment
+    if avg_score > 0.05:
+        final_sentiment = "Positive"
+    elif avg_score < -0.05:
+        final_sentiment = "Negative"
+    else:
+        final_sentiment = "Neutral"
+
+    # Average confidence
+    avg_confidence = sum(r["confidence"] for r in results) / len(results)
+
+    return {
+        "sentiment": final_sentiment,
+        "confidence": round(avg_confidence, 4),
+        "compound_score": round(avg_score, 4),
+        "models": results
+    }
+
+
+# -----------------------------
+# HTTP Server (same as yours)
+# -----------------------------
 
 class SentimentHandler(BaseHTTPRequestHandler):
     def do_OPTIONS(self):
@@ -58,28 +123,25 @@ class SentimentHandler(BaseHTTPRequestHandler):
         if self.path != "/analyze":
             self._send_json({"error": "Not found"}, status=404)
             return
+
         content_length = int(self.headers.get("Content-Length", 0))
         body = self.rfile.read(content_length)
+
         try:
             data = json.loads(body)
             text = data.get("text", "").strip()
+
             if not text:
                 self._send_json({"error": "Text field is required."}, status=400)
                 return
+
             result = analyze_sentiment(text)
             self._send_json(result, status=200)
-        except json.JSONDecodeError:
-            self._send_json({"error": "Invalid JSON body."}, status=400)
+
         except Exception as e:
             self._send_json({"error": str(e)}, status=500)
 
-    def do_GET(self):
-        if self.path == "/health":
-            self._send_json({"status": "ok", "service": "NLP Sentiment Service"})
-        else:
-            self._send_json({"error": "Not found"}, status=404)
-
-    def _send_json(self, data: dict, status: int = 200):
+    def _send_json(self, data, status=200):
         body = json.dumps(data).encode("utf-8")
         self.send_response(status)
         self.send_header("Content-Type", "application/json")
@@ -88,12 +150,9 @@ class SentimentHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
-    def log_message(self, format, *args):
-        print(f"[NLP] {self.address_string()} - {format % args}")
-
 
 if __name__ == "__main__":
     HOST, PORT = "localhost", 5001
     server = HTTPServer((HOST, PORT), SentimentHandler)
-    print(f"✅ Python NLP Service running at http://{HOST}:{PORT}")
+    print(f"Running on http://{HOST}:{PORT}")
     server.serve_forever()

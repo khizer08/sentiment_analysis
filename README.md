@@ -20,7 +20,7 @@ Response bubbles back up
 ```
 
 
-## ⚙️ Installation & Setup
+## Installation & Setup
 
 ### Prerequisites
 
@@ -43,3 +43,7 @@ node server.js
 cd frontend 
 npm install 
 npm run dev
+
+
+pip install vaderSentiment textblob transformers torch
+python -m textblob.download_corpora
