@@ -1,0 +1,25 @@
+{
+  "expo": {
+    "name": "SentiScope",
+    "slug": "sentiscope",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#0a0a0f"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0a0a0f"
+      },
+      "package": "com.sentiscope.nlp",
+      "versionCode": 1
+    },
+    "extra": {
+      "eas": {
+        "projectId": "replace-with-your-expo-project-id"
+      }
+    }
+  }
+}
