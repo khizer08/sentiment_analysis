@@ -3,11 +3,13 @@ import {
   View, Text, TextInput, TouchableOpacity, ScrollView,
   ActivityIndicator, StyleSheet, StatusBar, KeyboardAvoidingView, Platform,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { analyzeSentiment } from '../services/api';
 import SentimentBadge from '../components/SentimentBadge';
 import ConfidenceRing from '../components/ConfidenceRing';
 import ModelBreakdown from '../components/ModelBreakdown';
 import { colors, spacing, radius, typography } from '../theme';
+import { getScreenTopPadding } from '../navLayout';
 
 const EXAMPLES = [
   "I absolutely love this product!",
@@ -20,6 +22,8 @@ const EXAMPLES = [
 const SENTIMENT_EMOJI = { Positive: '😊', Negative: '😞', Neutral: '😐' };
 
 export default function AnalyzerScreen() {
+  const insets = useSafeAreaInsets();
+  const topReservedSpace = getScreenTopPadding(insets.top);
   const [text, setText] = useState('');
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -46,7 +50,7 @@ export default function AnalyzerScreen() {
   return (
     <KeyboardAvoidingView style={{ flex: 1, backgroundColor: colors.bg }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <StatusBar barStyle="light-content" backgroundColor={colors.bg} />
-      <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={[styles.scroll, { paddingTop: topReservedSpace }]} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
 
         {/* Header */}
         <View style={styles.header}>

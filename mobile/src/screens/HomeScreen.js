@@ -1,7 +1,9 @@
 import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, StatusBar } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, spacing, radius, typography } from '../theme';
+import { getScreenTopPadding } from '../navLayout';
 
 const features = [
   { icon: '🧠', title: 'Multi-Model NLP',   desc: 'VADER + TextBlob + BERT combined' },
@@ -12,11 +14,13 @@ const features = [
 
 export default function HomeScreen() {
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
+  const topReservedSpace = getScreenTopPadding(insets.top);
 
   return (
     <View style={styles.screen}>
       <StatusBar barStyle="light-content" backgroundColor={colors.bg} />
-      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={[styles.scroll, { paddingTop: topReservedSpace }]} showsVerticalScrollIndicator={false}>
 
         {/* Hero */}
         <View style={styles.hero}>
@@ -54,11 +58,11 @@ export default function HomeScreen() {
           <Text style={styles.sectionLabel}>Architecture</Text>
           <View style={styles.archRow}>
             {[
-              { label: 'React Native', sub: 'This app',     color: colors.cyan },
+              { label: 'React\nNative', sub: 'This app',     color: colors.cyan },
               { label: '→', arrow: true },
-              { label: 'Node.js',      sub: 'Backend API',  color: colors.positive },
+              { label: 'Node.js',      sub: 'Backend\nAPI',  color: colors.positive },
               { label: '→', arrow: true },
-              { label: 'Python NLP',   sub: 'VADER+BERT',   color: colors.neutral },
+              { label: 'Python NLP',   sub: 'VADER+\nBERT+TextBlob',   color: colors.neutral },
             ].map((item, i) =>
               item.arrow ? (
                 <Text key={i} style={styles.archArrow}>→</Text>

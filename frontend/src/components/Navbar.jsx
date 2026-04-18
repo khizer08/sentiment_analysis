@@ -12,7 +12,7 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <nav className="glass sticky top-0 z-50 border-b" style={{ borderColor: "rgba(255,255,255,0.07)" }}>
+    <nav className="glass sticky top-4 z-50 border-b" style={{ borderColor: "rgba(255,255,255,0.07)" }}>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
         {/* Logo */}
         <NavLink to="/" className="flex items-center gap-2">

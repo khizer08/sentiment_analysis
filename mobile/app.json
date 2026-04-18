@@ -17,9 +17,11 @@
       "versionCode": 1
     },
     "extra": {
+      "apiBaseUrl": "http://192.168.0.4:3001",
       "eas": {
-        "projectId": "replace-with-your-expo-project-id"
+        "projectId": "e9fd360c-1267-447b-9799-27ada34fbc23"
       }
-    }
+    },
+    "owner": "syed008"
   }
 }

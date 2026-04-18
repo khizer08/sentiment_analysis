@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet, StatusBar } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, spacing, radius, typography } from '../theme';
+import { getScreenTopPadding } from '../navLayout';
 
 const sections = [
   {
@@ -33,10 +35,13 @@ const thresholds = [
 ];
 
 export default function AboutScreen() {
+  const insets = useSafeAreaInsets();
+  const topReservedSpace = getScreenTopPadding(insets.top);
+
   return (
     <View style={{ flex: 1, backgroundColor: colors.bg }}>
       <StatusBar barStyle="light-content" backgroundColor={colors.bg} />
-      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={[styles.scroll, { paddingTop: topReservedSpace }]} showsVerticalScrollIndicator={false}>
 
         <View style={styles.header}>
           <Text style={styles.sectionLabel}>About</Text>

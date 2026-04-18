@@ -3,11 +3,15 @@ import {
   View, Text, ScrollView, TouchableOpacity, ActivityIndicator,
   StyleSheet, Alert, RefreshControl, StatusBar,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getHistory, clearHistory } from '../services/api';
 import SentimentBadge from '../components/SentimentBadge';
 import { colors, spacing, radius, typography } from '../theme';
+import { getScreenTopPadding } from '../navLayout';
 
 export default function HistoryScreen() {
+  const insets = useSafeAreaInsets();
+  const topReservedSpace = getScreenTopPadding(insets.top);
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -51,7 +55,7 @@ export default function HistoryScreen() {
     <View style={{ flex: 1, backgroundColor: colors.bg }}>
       <StatusBar barStyle="light-content" backgroundColor={colors.bg} />
       <ScrollView
-        contentContainerStyle={styles.scroll}
+        contentContainerStyle={[styles.scroll, { paddingTop: topReservedSpace }]}
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); fetchData(true); }} tintColor={colors.cyan} />}
       >
