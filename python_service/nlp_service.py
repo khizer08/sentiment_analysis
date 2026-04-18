@@ -1,94 +1,76 @@
-from http.server import HTTPServer, BaseHTTPRequestHandler
+import contextlib
+import io
 import json
+import os
+import sys
 
-# VADER
+os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
+os.environ.setdefault("HF_HUB_DISABLE_PROGRESS_BARS", "1")
+
+from textblob import TextBlob
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
-# TextBlob
-from textblob import TextBlob
-
-# Transformers (DistilBERT)
-from transformers import pipeline
-
-# Initialize models
 vader = SentimentIntensityAnalyzer()
-bert_pipeline = pipeline("sentiment-analysis")
+bert_pipeline = None
+skip_bert = os.environ.get("PYTHON_SKIP_BERT", "").strip().lower() in {"1", "true", "yes", "on"}
 
-# -----------------------------
-# Individual Model Functions
-# -----------------------------
+if not skip_bert:
+    try:
+        from transformers import logging as transformers_logging
+        from transformers import pipeline
+
+        transformers_logging.set_verbosity_error()
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            bert_pipeline = pipeline(
+                "sentiment-analysis",
+                model="distilbert/distilbert-base-uncased-finetuned-sst-2-english",
+            )
+    except Exception:
+        bert_pipeline = None
+
 
 def vader_analysis(text):
     scores = vader.polarity_scores(text)
     compound = scores["compound"]
-
-    if compound >= 0.05:
-        sentiment = "Positive"
-    elif compound <= -0.05:
-        sentiment = "Negative"
-    else:
-        sentiment = "Neutral"
-
     return {
         "model": "VADER",
-        "score": compound,
-        "confidence": round((abs(compound)), 4)
+        "score": round(compound, 4),
+        "confidence": round(abs(compound), 4),
     }
 
 
 def textblob_analysis(text):
-    blob = TextBlob(text)
-    polarity = blob.sentiment.polarity  # -1 to +1
-
-    if polarity > 0:
-        sentiment = "Positive"
-    elif polarity < 0:
-        sentiment = "Negative"
-    else:
-        sentiment = "Neutral"
-
+    polarity = TextBlob(text).sentiment.polarity
     return {
         "model": "TextBlob",
         "score": round(polarity, 4),
-        "confidence": round(abs(polarity), 4)
+        "confidence": round(abs(polarity), 4),
     }
 
 
 def bert_analysis(text):
-    result = bert_pipeline(text)[0]
+    if bert_pipeline is None:
+        return None
 
+    result = bert_pipeline(text)[0]
     label = result["label"]
     score = result["score"]
-
-    if label == "POSITIVE":
-        polarity = score
-        sentiment = "Positive"
-    else:
-        polarity = -score
-        sentiment = "Negative"
+    polarity = score if label == "POSITIVE" else -score
 
     return {
         "model": "BERT",
         "score": round(polarity, 4),
-        "confidence": round(score, 4)
+        "confidence": round(score, 4),
     }
 
 
-# -----------------------------
-# Combined Logic
-# -----------------------------
-
 def analyze_sentiment(text):
-    vader_res = vader_analysis(text)
-    textblob_res = textblob_analysis(text)
-    bert_res = bert_analysis(text)
+    results = [vader_analysis(text), textblob_analysis(text)]
+    bert_result = bert_analysis(text)
+    if bert_result is not None:
+        results.append(bert_result)
 
-    results = [vader_res, textblob_res, bert_res]
-
-    # Average score
-    avg_score = sum(r["score"] for r in results) / len(results)
-
-    # Final sentiment
+    avg_score = sum(item["score"] for item in results) / len(results)
     if avg_score > 0.05:
         final_sentiment = "Positive"
     elif avg_score < -0.05:
@@ -96,67 +78,27 @@ def analyze_sentiment(text):
     else:
         final_sentiment = "Neutral"
 
-    # Average confidence
-    avg_confidence = sum(r["confidence"] for r in results) / len(results)
-
+    avg_confidence = sum(item["confidence"] for item in results) / len(results)
     return {
         "sentiment": final_sentiment,
         "confidence": round(avg_confidence, 4),
         "compound_score": round(avg_score, 4),
-        "models": results
+        "models": results,
     }
 
 
-# -----------------------------
-# HTTP Server
-# -----------------------------
+def main():
+    text = sys.argv[1] if len(sys.argv) > 1 else ""
+    text = text.strip()
+    if not text:
+        raise ValueError("Text field is required.")
 
-class SentimentHandler(BaseHTTPRequestHandler):
-    def do_OPTIONS(self):
-        self.send_response(200)
-        self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type")
-        self.end_headers()
-
-    def do_POST(self):
-        if self.path != "/analyze":
-            self._send_json({"error": "Not found"}, status=404)
-            return
-
-        content_length = int(self.headers.get("Content-Length", 0))
-        body = self.rfile.read(content_length)
-
-        try:
-            data = json.loads(body)
-            text = data.get("text", "").strip()
-
-            if not text:
-                self._send_json({"error": "Text field is required."}, status=400)
-                return
-
-            result = analyze_sentiment(text)
-            self._send_json(result, status=200)
-
-        except Exception as e:
-            self._send_json({"error": str(e)}, status=500)
-
-    def _send_json(self, data, status=200):
-        body = json.dumps(data).encode("utf-8")
-        self.send_response(status)
-        self.send_header("Content-Type", "application/json")
-        self.send_header("Content-Length", str(len(body)))
-        self.send_header("Access-Control-Allow-Origin", "*")
-        self.end_headers()
-        self.wfile.write(body)
-
-    def log_message(self, format, *args):
-        print(f"[{self.address_string()}] {format % args}")
+    print(json.dumps(analyze_sentiment(text)))
 
 
 if __name__ == "__main__":
-    HOST, PORT = "localhost", 5001
-    server = HTTPServer((HOST, PORT), SentimentHandler)
-    print(f"✅ Python NLP service running on http://{HOST}:{PORT}")
-    print(f"   Models loaded: VADER, TextBlob, BERT (DistilBERT)")
-    server.serve_forever()
+    try:
+        main()
+    except Exception as exc:
+        print(json.dumps({"error": str(exc)}))
+        sys.exit(1)

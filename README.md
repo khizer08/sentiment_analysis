@@ -1,19 +1,18 @@
 # SentimentAI — Full-Stack NLP Sentiment Analysis App
 
-
 A complete academic NLP project built with **React**, **Node.js/Express**, **Python VADER/TextBlob/BERT**, and **React Native (Expo)** for Android.
 
-## Architecture (MVC)
+## Current Architecture (Single Backend Service)
 
 React Frontend (Web)     React Native (Mobile APK)
         │  POST /api/analyze        │
         └──────────┬────────────────┘
                    ▼
         Node.js Express (Controller → Model)
-                   │  HTTP POST to :5001/analyze
+                   │  Internal spawn() call
                    ▼
-        Python NLP Service (VADER + TextBlob + BERT)
-                   │  { sentiment, confidence, compound, models }
+        Python NLP Script (VADER + TextBlob + optional BERT)
+                   │  { sentiment, confidence, compound_score, models }
                    ▼
         Response bubbles back up
 
@@ -24,25 +23,38 @@ React Frontend (Web)     React Native (Mobile APK)
 - **Python** 3.8+ → https://python.org
 - **npm** (comes with Node.js)
 
-### Terminal 1 — Python NLP Servicecd 
+## One-time Setup
+
+### 1) Python dependencies
 ```bash
-pip install vaderSentiment textblob transformers torch
-python -m textblob.download_corpora
 cd python_service
-python nlp_service.py
+pip install -r requirements.txt
+python -m textblob.download_corpora
 ```
 
-### Terminal 2 — Node.js Backend
+### 2) Backend dependencies
 ```bash
 cd backend
 npm install
-node server.js
 ```
 
-### Terminal 3 — React Web Frontend
+### 3) Frontend dependencies
 ```bash
 cd frontend
 npm install
+```
+
+## Run the Project
+
+### Terminal 1 — Backend (includes Python execution internally)
+```bash
+cd backend
+node server.js
+```
+
+### Terminal 2 — React Web Frontend
+```bash
+cd frontend
 npm run dev
 ```
 
@@ -71,3 +83,14 @@ eas build -p android --profile preview
 ```
 
 > **Important**: Edit `mobile/src/services/api.js` and set `BASE_URL` to your machine's local IP before building.
+
+## Notes
+
+- You no longer need to run a separate Python HTTP server on `localhost:5001`.
+- Backend routes and responses remain unchanged.
+- If Python is not auto-detected, set `PYTHON_EXECUTABLE` before starting backend.
+  - Windows PowerShell example:
+    ```powershell
+    $env:PYTHON_EXECUTABLE="python"
+    node server.js
+    ```

@@ -1,0 +1,4 @@
+textblob
+vaderSentiment
+transformers
+torch
