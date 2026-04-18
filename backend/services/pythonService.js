@@ -6,7 +6,7 @@
 const path = require("path");
 const { spawn } = require("child_process");
 
-const PYTHON_SCRIPT_PATH = path.resolve(__dirname, "../../python_service/nlp_service.py");
+const PYTHON_SCRIPT_PATH = path.join(process.cwd(), "python_service", "nlp_service.py");
 const PYTHON_TIMEOUT_MS = 30000;
 const PYTHON_FALLBACK_TIMEOUT_MS = 12000;
 
