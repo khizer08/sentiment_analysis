@@ -3,7 +3,7 @@
 A complete academic NLP project built with **React**, **Node.js/Express**, **Python VADER/TextBlob/BERT**, and **React Native (Expo)** for Android.
 
 ## Architecture (MVC)
-```
+
 React Frontend (Web)     React Native (Mobile APK)
         │  POST /api/analyze        │
         └──────────┬────────────────┘
@@ -15,7 +15,6 @@ React Frontend (Web)     React Native (Mobile APK)
                    │  { sentiment, confidence, compound, models }
                    ▼
         Response bubbles back up
-```
 
 ## Installation & Setup
 
