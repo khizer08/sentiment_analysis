@@ -79,7 +79,7 @@ cd mobile
 npm install -g eas-cli
 eas login
 eas init
-eas secret:create --name EXPO_PUBLIC_API_BASE_URL --value https://your-app.onrender.com
+eas env:create --name EXPO_PUBLIC_API_BASE_URL --value https://sentiment-analysis-mlwn.onrender.com
 eas build -p android --profile preview
 ```
 
