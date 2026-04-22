@@ -2,7 +2,7 @@
   "expo": {
     "name": "SentiScope",
     "slug": "sentiscope",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
 
@@ -18,7 +18,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",  // 👈 ADD THIS
         "backgroundColor": "#0a0a0f"
       },
-      "package": "com.sentiscope.nlp",
+      "package": "com.sentiscope.nlp2",
       "versionCode": 1
     },
 
